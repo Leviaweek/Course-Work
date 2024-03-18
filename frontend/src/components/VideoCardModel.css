@@ -1,0 +1,49 @@
+.VideoCardModel{
+    cursor: default;
+    min-width: 240px;
+    min-height: 135px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 10px;
+    border-radius: 7px;
+}
+
+.VideoCardModel:hover{
+    cursor: pointer;
+    box-shadow: 0 0 10px 0 var(--color-shadow);
+}
+
+.VideoCardModel h1 {
+    font-size: 14px;
+    text-align: left;
+}
+
+.VideoCardModel p {
+    font-size: 10px;
+    text-align: left;
+}
+
+.image-container{
+    width: 100%;
+    height: 100%;
+    position: relative;
+}
+
+.image-container img{
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 7px;
+}
+
+.duration{
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    color: white;
+    padding: 2px;
+    font-size: 12px;
+    border-radius: 7px;
+}

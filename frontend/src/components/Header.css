@@ -1,0 +1,19 @@
+.Header{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    text-align: center;
+    padding: 5px;
+    padding-left: 30px;
+    padding-right: 30px;
+    box-shadow: 0 0 10px var(--color-shadow);
+    background-color: var(--color-secondary);
+    color: var(--font-color);
+    cursor: default;
+    width: 100%;
+}
+
+.Header h1{
+    font-size: 30px;
+    line-height: 1.1;
+}

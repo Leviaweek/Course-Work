@@ -1,0 +1,22 @@
+input[type="file"] {
+    padding: 0.6em 1.2em;
+    font-size: 1em;
+    font-weight: 500;
+    font-family: inherit;
+    background-color: var(--color-primary);
+    cursor: pointer;
+    color: var(--font-color);
+  }
+
+label {
+    color: var(--font-color);
+    background-color: var(--color-primary);
+  }
+
+input[type="text"] {
+    border-radius: 5px;
+    padding: 5px;
+    margin: 5px;
+    color: var(--font-color);
+    background-color: var(--color-primary);
+  }

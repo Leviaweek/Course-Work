@@ -1,0 +1,6 @@
+@VideosApi_HostAddress = http://localhost:5236
+
+GET {{VideosApi_HostAddress}}
+Accept: application/json
+
+###
