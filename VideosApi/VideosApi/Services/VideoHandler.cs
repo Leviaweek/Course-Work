@@ -72,4 +72,15 @@ public class VideoHandler(ILogger<VideoHandler> logger)
             return false;
         }
     }
+
+    public async Task<string> SaveVideoAsync(IFormFile formFile, CancellationToken cancellationToken = default)
+    {
+        await using var inputStream = formFile.OpenReadStream();
+        var tempPath = Path.GetTempFileName();
+        var newPath = tempPath + Path.GetExtension(formFile.FileName);
+        File.Move(tempPath, newPath);
+        await using var outputStream = new FileStream(newPath, FileMode.Open);
+        await inputStream.CopyToAsync(outputStream, cancellationToken);
+        return newPath;
+    }
 }

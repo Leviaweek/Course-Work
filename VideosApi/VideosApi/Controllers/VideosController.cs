@@ -12,7 +12,7 @@ namespace VideosApi.Controllers;
 
 [ApiController]
 [Route("/api/videos")]
-public class VideosController(ILogger<VideosController> logger, VideosDbContext dbContext, ConversionQueueService conversionQueueService): ControllerBase
+public class VideosController(ILogger<VideosController> logger, VideosDbContext dbContext, ConversionQueueService conversionQueueService, IServiceScopeFactory scopeFactory): ControllerBase
 {   
     private const string FilesPath = @"C:\Users\leviaweek\Desktop\2314226";
     
@@ -83,12 +83,10 @@ public class VideosController(ILogger<VideosController> logger, VideosDbContext 
         {
             return TypedResults.NotFound("Video not found");
         }
-        await using var inputStream = formFile.OpenReadStream();
-        var tempPath = Path.GetTempFileName();
-        var newPath = tempPath + Path.GetExtension(formFile.FileName);
-        System.IO.File.Move(tempPath, newPath);
-        await using var outputStream = new FileStream(newPath, FileMode.Open);
-        await inputStream.CopyToAsync(outputStream, cancellationToken);
+
+        await using var scope = scopeFactory.CreateAsyncScope();
+        var videoHandler = scope.ServiceProvider.GetRequiredService<VideoHandler>();
+        var newPath = await videoHandler.SaveVideoAsync(formFile, cancellationToken);
         var task = new ConversionTask(newPath, Path.Combine(FilesPath, video.Id), video.Id);
         var taskId = conversionQueueService.AddTask(task);
         return TypedResults.Ok(taskId.ToString("N"));
