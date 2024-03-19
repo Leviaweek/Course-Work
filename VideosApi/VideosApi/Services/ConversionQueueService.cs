@@ -19,41 +19,42 @@ public class ConversionQueueService(IServiceScopeFactory serviceScopeFactory, ID
             var task = _conversionTasks.Values.OrderBy(task => task.CreatedAt).FirstOrDefault(task => task.State == ConversionState.Pending);
             if (task is not null)
             {
-                task.State = ConversionState.InProgress;
-                await using var scope = serviceScopeFactory.CreateAsyncScope();
-                var videoHandler = scope.ServiceProvider.GetRequiredService<VideoHandler>();
-                await using var dbContext = await dbContextFactory.CreateDbContextAsync(cancellationToken);
-                var result = await videoHandler.ConvertToMp4Async(task, cancellationToken);
-                if (!result)
-                {
-                    task.State = ConversionState.Failed;
-                }
-                else
-                {
-                    var previewResult = await videoHandler.CreatePreviewAsync(task.OutputPath, cancellationToken);
-                    task.State = previewResult ? ConversionState.Completed : ConversionState.Failed;
-                }
-                File.Delete(task.TempPath);
-                var videoInfo = await dbContext.VideosInfos.FirstOrDefaultAsync(v => v.Id == task.VideoId, cancellationToken);
-                if (videoInfo is not null)
-                {
-                    videoInfo.IsUploaded = true;
-                    videoInfo.PhysicalVideo = new PhysicalVideo
-                    {
-                        VideoInfoId = videoInfo.Id,
-                        Size = new FileInfo(Path.Combine(task.OutputPath, "video.mp4")).Length,
-                        Duration = task.Duration,
-                        CreatedAt = DateTimeOffset.UtcNow.ToString()
-                    };
-                    await dbContext.SaveChangesAsync(cancellationToken);
-                }
-                
+                await HandleTaskAsync(task, cancellationToken);
             }
             if ((DateTimeOffset.UtcNow - _lastClearTime).TotalDays >= 1)
             {
                 ClearOldTasks();
             }
             await Task.Delay(1000, cancellationToken);
+        }
+    }
+    private async Task HandleTaskAsync(ConversionTask task, CancellationToken cancellationToken)
+    {
+        task.State = ConversionState.InProgress;
+        await using var scope = serviceScopeFactory.CreateAsyncScope();
+        var videoHandler = scope.ServiceProvider.GetRequiredService<VideoHandler>();
+        await using var dbContext = await dbContextFactory.CreateDbContextAsync(cancellationToken);
+        var result = await videoHandler.ConvertToMp4Async(task, cancellationToken);
+        File.Delete(task.TempPath);
+        if (!result)
+        {
+            task.State = ConversionState.Failed;
+            return;
+        }
+        var previewResult = await videoHandler.CreatePreviewAsync(task.OutputPath, cancellationToken);
+        task.State = previewResult ? ConversionState.Completed : ConversionState.Failed;
+        var videoInfo = await dbContext.VideosInfos.FirstOrDefaultAsync(v => v.Id == task.VideoId, cancellationToken);
+        if (videoInfo is not null)
+        {
+            videoInfo.IsUploaded = true;
+            videoInfo.PhysicalVideo = new PhysicalVideo
+            {
+                VideoInfoId = videoInfo.Id,
+                Size = new FileInfo(Path.Combine(task.OutputPath, "video.mp4")).Length,
+                Duration = task.Duration,
+                CreatedAt = DateTimeOffset.UtcNow.ToString()
+            };
+            await dbContext.SaveChangesAsync(cancellationToken);
         }
     }
 

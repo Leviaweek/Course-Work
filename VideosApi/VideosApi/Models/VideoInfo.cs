@@ -3,6 +3,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace VideosApi.Models;
 
+[Serializable]
 [Table("VideosInfos", Schema = "public")]
 public class VideoInfo
 {
@@ -11,7 +12,7 @@ public class VideoInfo
     [StringLength(100, MinimumLength = 1)]
     public required string Title { get; set; }
 
-    public bool IsUploaded { get; set; } = false;
+    public bool IsUploaded { get; set; }
 
     public PhysicalVideo PhysicalVideo { get; set; } = null!;
 }

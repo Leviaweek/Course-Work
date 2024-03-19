@@ -33,7 +33,11 @@ public class VideosController(
                     Duration = video.PhysicalVideo.Duration,
                     CreatedAt = video.PhysicalVideo.CreatedAt
                 }).ToListAsync(cancellationToken: cancellationToken);
-        var response = new GetVideosResponse(videos.Count, videos);
+        var response = new GetVideosResponse
+        {
+            Count = videos.Count,
+            Videos = videos
+        };
         logger.LogInformation("Sent: {response}", response.ToString());
         return TypedResults.Ok(response);
     }
@@ -67,7 +71,7 @@ public class VideosController(
 
         logger.LogInformation("Sent preview by id: {id}", id);
         return TypedResults.PhysicalFile(Path.Combine(FilesPath, result.Id, "preview.jpg"), "image/jpeg",
-            fileDownloadName: $"{result.Id}.jpg");
+            fileDownloadName: $"{result.Id}.jpg", enableRangeProcessing: true);
     }
 
     [HttpPost]

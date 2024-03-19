@@ -10,7 +10,6 @@ public class PhysicalVideo
     [StringLength(32, MinimumLength = 32)]
     [Key]
     public required string VideoInfoId { get; set; }
-    
     public required long Size { get; set; }
     public required long Duration { get; set; }
     [StringLength(50)]

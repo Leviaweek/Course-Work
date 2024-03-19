@@ -1,5 +1,6 @@
 namespace VideosApi.Models;
 
+[Serializable]
 public record ConversionProgress
 {
     public double Speed { get; set; }

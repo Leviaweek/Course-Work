@@ -81,6 +81,7 @@ public class VideoHandler(ILogger<VideoHandler> logger)
         File.Move(tempPath, newPath);
         await using var outputStream = new FileStream(newPath, FileMode.Open);
         await inputStream.CopyToAsync(outputStream, cancellationToken);
+        logger.LogInformation("Saved video to: {newPath}", newPath);
         return newPath;
     }
 }
