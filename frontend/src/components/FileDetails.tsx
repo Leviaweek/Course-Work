@@ -3,7 +3,7 @@ import "./FileDetails.css"
 const FileDetails: React.FC<{ file: File; }> = ({ file }) => {
   return (
     <div className="FileDetails">
-      File details:
+      <p>File details:</p>
       <ul>
         <li>Name: {file.name}</li>
         <li>Type: {file.type}</li>

@@ -5,9 +5,7 @@ const VideoFileInput: React.FC<{ onChangeFile: (file: File) => void; }> = ({
 }) => {
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
-    if (files) {
-      onChangeFile(files[0]);
-    }
+    files && files[0] && onChangeFile(files[0]);
   };
   return (
     <div className="VideoFileInput">

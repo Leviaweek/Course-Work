@@ -1,6 +1,11 @@
 import "./Header.css"
 
-const Header: React.FC<{showUploadModal: () => void, toggleTheme: () => void}> = ({showUploadModal, toggleTheme}) => {
+interface HeaderProps {
+  showUploadModal: () => void;
+  toggleTheme: () => void;
+}
+
+const Header: React.FC<HeaderProps> = ({showUploadModal, toggleTheme}) => {
   return (
     <div className="Header">
       <button onClick={showUploadModal}>Add Video</button>

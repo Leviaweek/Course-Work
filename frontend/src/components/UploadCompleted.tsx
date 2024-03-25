@@ -1,10 +1,12 @@
 import { useEffect } from "react";
 import { LoadingState } from "../models/LoadingState";
 
-const UploadCompleted: React.FC<{ 
+interface UploadCompletedProps {
   changeState: (state: LoadingState, ) => void;
   updateVideos: () => void;
-}> = ({ changeState, updateVideos }) => {
+}
+
+const UploadCompleted: React.FC<UploadCompletedProps> = ({ changeState, updateVideos }) => {
   useEffect(() => {
       updateVideos();
     setTimeout(() => {

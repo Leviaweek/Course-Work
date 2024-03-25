@@ -4,14 +4,16 @@ import { ConversionProgressModel } from "./ConversionProgressModel";
 import { ConversionProgressDto } from "../models/ConversionProgressDto";
 import { LoadingState } from "../models/LoadingState";
 
-const UploadStatus: React.FC<{
-  statusId: string;
+interface UploadStatusProps {
+  statusId: string | null;
   changeState: (state: LoadingState) => void;
-}> = ({ statusId, changeState }) => {
+}
+
+const UploadStatus: React.FC<UploadStatusProps> = ({ statusId, changeState }) => {
   const [progress, setProgress] = useState<ConversionProgressDto | null>(null);
 
   const fetchStatus = async () => {
-    if (statusId === "") {
+    if (!statusId) {
       return;
     }
     const uploadStatus = await Api.getUploadStatusAsync(statusId);

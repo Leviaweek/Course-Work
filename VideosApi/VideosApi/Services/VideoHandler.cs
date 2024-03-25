@@ -20,23 +20,26 @@ public class VideoHandler(ILogger<VideoHandler> logger)
                 .AddStream(videoStream.Streams)
                 .AddParameter("-c:v libx264")
                 .SetOutput(Path.Combine(task.OutputPath, "video.mp4"));
-            
+
             res.OnProgress += (sender, args) =>
             {
                 task.Progress ??= new ConversionProgress();
                 task.Progress.Percent = args.Percent;
-                var speed = (args.Duration.TotalSeconds - task.Progress.Duration) / (DateTimeOffset.UtcNow - task.Progress.LastUpdate).TotalSeconds;
+                var speed = (args.Duration.TotalSeconds - task.Progress.Duration) /
+                            (DateTimeOffset.UtcNow - task.Progress.LastUpdate).TotalSeconds;
                 if (!double.IsInfinity(speed))
                 {
                     task.Progress.Speed = speed;
                 }
+
                 task.Progress.LastUpdate = DateTimeOffset.UtcNow;
                 task.Progress.Duration = args.Duration.TotalSeconds;
-                task.Progress.TimeLeft = (args.TotalLength.TotalSeconds - args.Duration.TotalSeconds) / task.Progress.Speed;
+                task.Progress.TimeLeft =
+                    (args.TotalLength.TotalSeconds - args.Duration.TotalSeconds) / task.Progress.Speed;
             };
-            
+
             await res.Start(cancellationToken);
-            
+
             logger.LogInformation("{}", res);
             return true;
         }

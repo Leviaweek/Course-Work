@@ -7,7 +7,7 @@ import { UploadFailed } from "./UploadFailed";
 
 const VideoUploader: React.FC<{ updateVideos: () => void}> = ({updateVideos}): JSX.Element => {
   const [loadingState, setLoadingState] = useState<LoadingState>("Form");
-  const [statusId, setStatusId] = useState<string>("");
+  const [statusId, setStatusId] = useState<string | null>(null);
   switch (loadingState) {
     case "Form":
       return (

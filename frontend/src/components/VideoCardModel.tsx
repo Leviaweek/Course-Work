@@ -4,16 +4,19 @@ import { VideoCard } from "../models/VideoCard";
 import "./VideoCardModel.css";
 import moment from "moment";
 
-const VideoCardModel: React.FC<{
+interface VideoCardModelProps {
   videoCard: VideoCard;
   onVideoClick: (videoCard: VideoCard) => void;
-}> = ({ videoCard, onVideoClick }): JSX.Element => {
+}
+
+const VideoCardModel: React.FC<VideoCardModelProps> = ({ videoCard, onVideoClick }): JSX.Element => {
+  const format = moment.utc(videoCard.duration).format("HH:mm:ss").replace(/^00:/g, "");
   return (
     <div className="VideoCardModel" onClick={() => onVideoClick(videoCard)}>
       <div className="image-container">
         <img src={Api.getPreviewUrl(videoCard.id)}></img>
         <div className="duration">
-          <p>{moment.utc(videoCard.duration).format("HH:mm:ss").replace(/^00:/g, "")}</p>
+          <p>{format}</p>
         </div>
       </div>  
       <div className="video-info">

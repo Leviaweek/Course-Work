@@ -5,11 +5,15 @@ import { FileDetails } from "./FileDetails";
 import { VideoFileInput } from "./VideoFileInput";
 import "./FileUploadForm.css";
 
-const FileUploadForm: React.FC<{
+interface FileUploadFormProps {
   changeState: (state: LoadingState) => void;
   setStatusId: (id: string) => void;
-}> = ({ changeState, setStatusId }) => {
+}
 
+const FileUploadForm: React.FC<FileUploadFormProps> = ({
+  changeState,
+  setStatusId,
+}) => {
   const [file, setFile] = useState<File | null>(null);
   const [tempInputValue, setTempInputValue] = useState<string>("");
 
@@ -31,14 +35,13 @@ const FileUploadForm: React.FC<{
       {file && <FileDetails file={file} />}
       <VideoFileInput onChangeFile={setFile} />
 
-
       <label htmlFor="input">Title</label>
       <input
         type="text"
         onChange={onInputChange}
         value={tempInputValue}
       ></input>
-      {(file && tempInputValue !== "" ) && (
+      {file && tempInputValue !== "" && (
         <button type="button" onClick={handleUpload}>
           Upload a file
         </button>

@@ -1,13 +1,10 @@
-using System.Runtime.Intrinsics.Arm;
-using System.Security.Cryptography;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using VideosApi.Database;
 using VideosApi.Models;
 using VideosApi.Services;
-using System.IO;
-using System.Net.Mime;
+using Microsoft.Extensions.Options;
 
 namespace VideosApi.Controllers;
 
@@ -16,15 +13,17 @@ namespace VideosApi.Controllers;
 public class VideosController(
     ILogger<VideosController> logger,
     VideosDbContext dbContext,
-    ConversionQueueService conversionQueueService,
-    IServiceScopeFactory scopeFactory) : ControllerBase
+    ConversionQueue conversionQueue,
+    IOptions<ControllerOptions> options,
+    VideoHandler videoHandler) : ControllerBase
 {
-    private const string FilesPath = @"C:\Users\leviaweek\Desktop\2314226";
+    private readonly string _filesPath = options.Value.FilesPath;
 
     [HttpGet]
     public async Task<Ok<GetVideosResponse>> GetVideosListAsync(CancellationToken cancellationToken = default)
     {
-        var videos = await dbContext.VideosInfos.Where(video => video.IsUploaded).OrderBy(video => video.Id).Take(10)
+        var videos = await dbContext.VideosInfos.Where(video => video.IsUploaded)
+            .OrderBy(video => video.PhysicalVideo.CreatedAt).Take(10)
             .Select<VideoInfo, VideoCard>(video =>
                 new VideoCard
                 {
@@ -54,7 +53,7 @@ public class VideosController(
         }
 
         logger.LogInformation("Sent video by id: {id}", id);
-        return TypedResults.PhysicalFile(Path.Combine(FilesPath, result.Id, "video.mp4"), "video/mp4",
+        return TypedResults.PhysicalFile(Path.Combine(_filesPath, result.Id, Constants.VideoFileName), "video/mp4",
             fileDownloadName: $"{result.Id}.mp4", enableRangeProcessing: true);
     }
 
@@ -70,7 +69,7 @@ public class VideosController(
         }
 
         logger.LogInformation("Sent preview by id: {id}", id);
-        return TypedResults.PhysicalFile(Path.Combine(FilesPath, result.Id, "preview.jpg"), "image/jpeg",
+        return TypedResults.PhysicalFile(Path.Combine(_filesPath, result.Id, Constants.PreviewFileName), "image/jpeg",
             fileDownloadName: $"{result.Id}.jpg", enableRangeProcessing: true);
     }
 
@@ -105,18 +104,21 @@ public class VideosController(
             return TypedResults.NotFound("Video not found");
         }
 
-        await using var scope = scopeFactory.CreateAsyncScope();
-        var videoHandler = scope.ServiceProvider.GetRequiredService<VideoHandler>();
         var newPath = await videoHandler.SaveVideoAsync(formFile, cancellationToken);
-        var task = new ConversionTask(newPath, Path.Combine(FilesPath, video.Id), video.Id);
-        var taskId = conversionQueueService.AddTask(task);
+        var task = new ConversionTask(newPath, Path.Combine(_filesPath, video.Id), video.Id);
+        var taskId = conversionQueue.AddTask(task);
         return TypedResults.Ok(taskId.ToString("N"));
     }
 
     [HttpGet("{id}/status")]
     public Results<Ok<ConversionTaskDto>, NotFound> GetVideoUploadingStatus(string id)
     {
-        var task = conversionQueueService.GetTask(id);
+        if (Guid.TryParse(id, out var guid))
+        {
+            return TypedResults.NotFound();
+        }
+
+        var task = conversionQueue.GetTask(guid);
         if (task is null)
         {
             return TypedResults.NotFound();
