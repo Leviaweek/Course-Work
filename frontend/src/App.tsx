@@ -9,9 +9,11 @@ import { VideoUploader } from "./components/VideoUploader";
 import { VideoModel } from "./components/VideoModel";
 import { useLocalStorage } from "usehooks-ts";
 
-
-function App() {
-  const [theme, setTheme] = useLocalStorage<"light-theme" | "dark-theme">("theme", "light-theme");
+const App: React.FC = () => {
+  const [theme, setTheme] = useLocalStorage<"light-theme" | "dark-theme">(
+    "theme",
+    "light-theme"
+  );
   const toggleTheme = () => {
     setTheme(theme === "light-theme" ? "dark-theme" : "light-theme");
   };
@@ -53,9 +55,10 @@ function App() {
 
   return (
     <div className={`App ${theme}`}>
-      <Header showUploadModal={showUploadModal} toggleTheme={toggleTheme}/>
+      <Header showUploadModal={showUploadModal} toggleTheme={toggleTheme} />
       <VideoGallery onVideoClick={onVideoClick} videoList={videoList} />
-      <Modal className={`video-player ${theme}`}
+      <Modal
+        className={`video-player ${theme}`}
         isOpen={videoModalIsOpen}
         onAfterOpen={showVideoModal}
         onAfterClose={hideVideoModal}
@@ -68,7 +71,8 @@ function App() {
           </div>
         )}
       </Modal>
-      <Modal className={`upload-modal ${theme}`}
+      <Modal
+        className={`upload-modal ${theme}`}
         isOpen={uploadModalIsOpen}
         onAfterOpen={showUploadModal}
         onAfterClose={hideUploadModal}

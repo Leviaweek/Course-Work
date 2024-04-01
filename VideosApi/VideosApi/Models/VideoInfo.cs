@@ -3,7 +3,6 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace VideosApi.Models;
 
-[Serializable]
 [Table("VideosInfos", Schema = "public")]
 public class VideoInfo
 {

@@ -5,7 +5,9 @@ import { LoadingState } from "../models/LoadingState";
 import { UploadCompleted } from "./UploadCompleted";
 import { UploadFailed } from "./UploadFailed";
 
-const VideoUploader: React.FC<{ updateVideos: () => void}> = ({updateVideos}): JSX.Element => {
+const VideoUploader: React.FC<{ updateVideos: () => void }> = ({
+  updateVideos,
+}): JSX.Element => {
   const [loadingState, setLoadingState] = useState<LoadingState>("Form");
   const [statusId, setStatusId] = useState<string | null>(null);
   switch (loadingState) {
@@ -19,7 +21,12 @@ const VideoUploader: React.FC<{ updateVideos: () => void}> = ({updateVideos}): J
     case "InProgress":
       return <UploadStatus statusId={statusId} changeState={setLoadingState} />;
     case "Completed":
-      return <UploadCompleted changeState={setLoadingState} updateVideos={updateVideos} />;
+      return (
+        <UploadCompleted
+          changeState={setLoadingState}
+          updateVideos={updateVideos}
+        />
+      );
     case "Failed":
       return <UploadFailed changeState={setLoadingState} />;
   }

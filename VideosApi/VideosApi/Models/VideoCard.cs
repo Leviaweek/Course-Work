@@ -5,10 +5,10 @@ namespace VideosApi.Models;
 [Serializable]
 public sealed class VideoCard
 {
-    [JsonPropertyName("title")]
-    public required string Title { get; set; }
     [JsonPropertyName("id")]
     public required string Id { get; set; }
+    [JsonPropertyName("title")]
+    public required string Title { get; set; }
     [JsonPropertyName("createdAt")]
     public required string CreatedAt { get; set; }
     [JsonPropertyName("duration")]

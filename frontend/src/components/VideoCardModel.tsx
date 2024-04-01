@@ -9,8 +9,14 @@ interface VideoCardModelProps {
   onVideoClick: (videoCard: VideoCard) => void;
 }
 
-const VideoCardModel: React.FC<VideoCardModelProps> = ({ videoCard, onVideoClick }): JSX.Element => {
-  const format = moment.utc(videoCard.duration).format("HH:mm:ss").replace(/^00:/g, "");
+const VideoCardModel: React.FC<VideoCardModelProps> = ({
+  videoCard,
+  onVideoClick,
+}): JSX.Element => {
+  const format = moment
+    .utc(videoCard.duration)
+    .format("HH:mm:ss")
+    .replace(/^00:/g, "");
   return (
     <div className="VideoCardModel" onClick={() => onVideoClick(videoCard)}>
       <div className="image-container">
@@ -18,7 +24,7 @@ const VideoCardModel: React.FC<VideoCardModelProps> = ({ videoCard, onVideoClick
         <div className="duration">
           <p>{format}</p>
         </div>
-      </div>  
+      </div>
       <div className="video-info">
         <h1>{videoCard.title}</h1>
         <p>{moment(videoCard.createdAt).fromNow()}</p>

@@ -1,4 +1,5 @@
 import { ConversionProgressDto } from "../models/ConversionProgressDto";
+import "./ConversionProgressModel.css";
 
 const ConversionProgressModel: React.FC<{uploadProgress: ConversionProgressDto}> = ({
     uploadProgress
